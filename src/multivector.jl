@@ -428,15 +428,15 @@ function show_multivector(io::IO, m::MultiVector{CA,T,BI,K}) where {CA,T,BI,K}
                 bs = basesymbol(CA, BI[k])
                 if bs == Symbol(:𝟏)
                     if coefficients(m)[k] < 0
-                        print(io, "-", -coefficients(m)[k])
+                        print(io, " - ", -coefficients(m)[k])
                     else
-                        print(io, "+", coefficients(m)[k])
+                        print(io, " + ", coefficients(m)[k])
                     end
                 else
                     if coefficients(m)[k] < 0
-                        print(io, "-", -coefficients(m)[k], "×", bs)
+                        print(io, " - ", -coefficients(m)[k], bs)
                     else
-                        print(io, "+", coefficients(m)[k], "×", bs)
+                        print(io, " + ", coefficients(m)[k], bs)
                     end
                 end
             end

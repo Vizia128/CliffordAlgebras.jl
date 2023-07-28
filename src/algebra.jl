@@ -63,14 +63,20 @@ struct CliffordAlgebra{Np,Nn,Nz,S,BT}
         Npos::Integer,
         Nneg::Integer,
         Nzero::Integer,
-        BaseSymbols::NTuple{N,Symbol},
+        BaseSymbols::NTuple{N,Symbol};
+        BaseTuples::Union{Nothing, Tuple}=nothing,
     ) where {N}
         Npos = Int(Npos)
         Nneg = Int(Nneg)
         Nzero = Int(Nzero)
         @assert Npos >= 0 && Nneg >= 0 && Nzero >=0 "Algebra signature must be non-negative."
         @assert Npos + Nneg + Nzero == N "Base symbol count must match signature."
+
         BT = adaptbasefordual(enumeratebase(Int(N)))
+        if BaseTuples !== nothing
+            @assert Set(Set(bt) for bt in BaseTuples) ⊆ Set(Set(bt) for bt in BT)
+            BT = BaseTuples
+        end
         new{Npos,Nneg,Nzero,BaseSymbols,BT}()
     end
 end
@@ -149,6 +155,15 @@ function CliffordAlgebra(a::Symbol)
         return CliffordAlgebra(2, 0, 1, (:e1, :e2, :e0))
     elseif a in (:PGA3D, :Projective3D, :Plane3D)
         return CliffordAlgebra(3, 0, 1, (:e1, :e2, :e3, :e0))
+    elseif a in (:KleinMotor,)
+        return CliffordAlgebra(3, 0, 1, (:x, :y, :z, :ø); BaseTuples=((), (2, 3), (3, 1), (1, 2), (4, 1, 2, 3), (4, 1), (4, 2), (4, 3)))
+    elseif a in (:Klein,)
+        return CliffordAlgebra(3, 0, 1, (:x, :y, :z, :ø); BaseTuples=(
+            (4,), (1,), (2,), (3,), 
+            (), (2, 3), (3, 1), (1, 2), 
+            (4, 1, 2, 3), (4, 1), (4, 2), (4, 3),
+            (1, 2, 3), (4, 3, 2), (4, 1, 3), (4, 2, 1)
+        ))
     elseif a in (:CGA2D, :Conformal2D)
         return CliffordAlgebra(3, 1, 0, (:e1, :e2, :e₊, :e₋))
     elseif a in (:CGA3D, :Conformal3D)
