@@ -68,4 +68,3 @@ function findpermutation(a, b)
     @assert length(intersect(a, b)) == length(a) "Permutations can only be found between sequences with the same elements."
     [findfirst(isequal(a[n]), b) for n in eachindex(a)]
 end
-

@@ -156,7 +156,10 @@ function CliffordAlgebra(a::Symbol)
     elseif a in (:PGA3D, :Projective3D, :Plane3D)
         return CliffordAlgebra(3, 0, 1, (:e1, :e2, :e3, :e0))
     elseif a in (:KleinMotor,)
-        return CliffordAlgebra(3, 0, 1, (:x, :y, :z, :ø); BaseTuples=((), (2, 3), (3, 1), (1, 2), (4, 1, 2, 3), (4, 1), (4, 2), (4, 3)))
+        return CliffordAlgebra(3, 0, 1, (:x, :y, :z, :ø); BaseTuples=(
+            (), (2, 3), (3, 1), (1, 2), 
+            (4, 1, 2, 3), (4, 1), (4, 2), (4, 3)
+        ))
     elseif a in (:Klein,)
         return CliffordAlgebra(3, 0, 1, (:x, :y, :z, :ø); BaseTuples=(
             (4,), (1,), (2,), (3,), 
