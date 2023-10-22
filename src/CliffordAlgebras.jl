@@ -26,6 +26,8 @@ export Λᵏ, exp, outermorphism
 export pga_motor, pga_line, pga_rotor, pga_translator, pga_point, pga_direction, pga_plane, pga_sudo_scalar
 export pga_m_motor, pga_m_line, pga_m_rotor, pga_m_translator
 
+using StaticArrays, Unitful
+
 include("utils.jl")
 include("algebra.jl")
 include("multivector.jl")
