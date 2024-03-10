@@ -23,11 +23,7 @@ export inv, adjoint
 export polarize, norm, norm_sqr
 export Λᵏ, exp, outermorphism
 
-export pga_motor, pga_line, pga_rotor, pga_translator, pga_point, pga_direction, pga_plane, pga_sudo_scalar
-export pga_k_motor, pga_k_line, pga_k_rotor, pga_k_translator, pga_k_point, pga_k_direction, pga_k_plane, pga_k_sudo_scalar
-export pga_m_motor, pga_m_line, pga_m_rotor, pga_m_translator
-
-using StaticArrays, Unitful
+export define_clifford_algebra_helpers
 
 include("utils.jl")
 include("algebra.jl")

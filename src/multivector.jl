@@ -4,7 +4,7 @@ import Base.zero, Base.one, Base.iszero, Base.isone
 import Base.==, Base.show, Base.eltype, Base.convert
 import Base.getproperty, Base.propertynames, Base.conj
 import Base.reverse, Base.~
-using StaticArrays, Unitful
+using StaticArrays
 
 """
     MultiVector{CA,T,BI}
@@ -19,7 +19,7 @@ function MultiVector(
     CA::Type{<:CliffordAlgebra},
     BI::NTuple{K,Integer},
     c::NTuple{K,T},
-) where {K,T<:Union{Real, Quantity{Q}}} where {Q<:Real}
+) where {K,T<:Real}
     @assert length(BI) > 0 
     #@assert issorted(BI) && allunique(BI)
     MultiVector{CA,T,convert(NTuple{K,Int}, BI),K}(c)
@@ -31,12 +31,12 @@ end
 
 Creates a MultiVector from the real number a with only a scalar component. The internal storage type of the MultiVector is the type of a.
 """
-function MultiVector(CA::Type{<:CliffordAlgebra}, a::T) where {T<:Union{Real, Quantity{Q}}} where {Q<:Real}
+function MultiVector(CA::Type{<:CliffordAlgebra}, a::T) where {T<:Real}
     BI = (1,)
     K = 1
     MultiVector{CA,T,BI,K}((a,))
 end
-MultiVector(ca::CliffordAlgebra, a::T) where {T<:Union{Real, Quantity{Q}}} where {Q<:Real} = MultiVector(typeof(ca), a)
+MultiVector(ca::CliffordAlgebra, a::T) where {T<:Real} = MultiVector(typeof(ca), a)
 
 """
     MultiVector(::CliffordAlgebra, v::NTuple{N,T}) where {N,T<:Real}
@@ -44,12 +44,12 @@ MultiVector(ca::CliffordAlgebra, a::T) where {T<:Union{Real, Quantity{Q}}} where
 
 Creates a MultiVector by converting the provided vector v to a 1-vector. The internal storage type of the MultiVector is T.
 """
-function MultiVector(CA::Type{<:CliffordAlgebra}, v::NTuple{N,T}) where {N,T<:Union{Real, Quantity{Q}}} where {Q<:Real}
+function MultiVector(CA::Type{<:CliffordAlgebra}, v::NTuple{N,T}) where {N,T<:Real}
     @assert N == order(CA) "Dimension count mismatch."
     MultiVector(CA, Tuple(2:N+1), v)
 end
 
-MultiVector(ca::CliffordAlgebra, v::NTuple{N,T}) where {N,T<:Union{Real, Quantity{Q}}} where {Q<:Real} =
+MultiVector(ca::CliffordAlgebra, v::NTuple{N,T}) where {N,T<:Real} =
     MultiVector(typeof(ca), v)
 
 zero(::Type{<:MultiVector{CA,T}}) where {CA,T} = MultiVector(CA, zero(T))
@@ -591,35 +591,12 @@ macro define_clifford_algebra_helpers(algebra_symbol, algebra_name, type_symbol,
             return MultiVector($algebra, $(Symbol(ALGEBRA_UPPER * TYPE_UPPER * "_INDICES_TUPLE")), ntuple)
         end
 
-        function $(Symbol(algebra_lower * type_lower))(args::T...)::MultiVector where {T<:Union{Real, Quantity{Q}}} where {Q<:Real}
+        function $(Symbol(algebra_lower * type_lower))(args::T...)::MultiVector where {T<:Real}
             MultiVector($algebra, $(Symbol(ALGEBRA_UPPER * TYPE_UPPER * "_INDICES_TUPLE")), ntuple(i -> args[i], $indices_length))
         end
 
-        function $(Symbol(algebra_lower * type_lower))(vec::AbstractVector{T})::MultiVector where {T<:Union{Real, Quantity{Q}}} where {Q<:Real}
+        function $(Symbol(algebra_lower * type_lower))(vec::AbstractVector{T})::MultiVector where {T<:Real}
             return MultiVector($algebra, $(Symbol(ALGEBRA_UPPER * TYPE_UPPER * "_INDICES_TUPLE")), NTuple{$indices_length, T}(vec))
         end
     end
 end
-
-@define_clifford_algebra_helpers KleinMotor pga_km Motor 1 2 3 4 5 6 7 8
-@define_clifford_algebra_helpers KleinMotor pga_km Line 2 3 4 6 7 8
-@define_clifford_algebra_helpers KleinMotor pga_km Rotor 1 2 3 4
-@define_clifford_algebra_helpers KleinMotor pga_km Translator 1 6 7 8
-
-@define_clifford_algebra_helpers Klein pga_k Motor 5 6 7 8 9 10 11 12
-@define_clifford_algebra_helpers Klein pga_k Line 6 7 8 10 11 12
-@define_clifford_algebra_helpers Klein pga_k Rotor 5 6 7 8
-@define_clifford_algebra_helpers Klein pga_k Translator 5 10 11 12
-@define_clifford_algebra_helpers Klein pga_k Point 1 2 3 4
-@define_clifford_algebra_helpers Klein pga_k Direction 2 3 4
-@define_clifford_algebra_helpers Klein pga_k Plane 13 14 15 16
-@define_clifford_algebra_helpers Klein pga_k Sudo_Scalar 9
-
-@define_clifford_algebra_helpers PGA3D pga Motor 1 6 7 8 9 10 11 16
-@define_clifford_algebra_helpers PGA3D pga Line 6 7 8 9 10 11
-@define_clifford_algebra_helpers PGA3D pga Rotor 1 6 7 8
-@define_clifford_algebra_helpers PGA3D pga Translator 1 9 10 11
-@define_clifford_algebra_helpers PGA3D pga Point 2 3 4 5
-@define_clifford_algebra_helpers PGA3D pga Direction 2 3 4
-@define_clifford_algebra_helpers PGA3D pga Plane 12 13 14 15
-@define_clifford_algebra_helpers PGA3D pga Sudo_Scalar 16
