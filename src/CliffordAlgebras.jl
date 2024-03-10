@@ -23,8 +23,6 @@ export inv, adjoint
 export polarize, norm, norm_sqr
 export Λᵏ, exp, outermorphism
 
-export define_clifford_algebra_helpers
-
 include("utils.jl")
 include("algebra.jl")
 include("multivector.jl")
